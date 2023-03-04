@@ -16,7 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+api_url = 'api/v1/'
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('frontend.urls')),
+    path(api_url, include('app_megano.urls')),
+    # path(api_url, include('app_orders.urls')),
+    path(api_url, include('app_users.urls')),
+    # path(api_url, include('app_cart.urls')),
 ]

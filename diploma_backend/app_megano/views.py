@@ -1,3 +1,10 @@
-from django.shortcuts import render
+from rest_framework.viewsets import ReadOnlyModelViewSet
 
-# Create your views here.
+from .models import Category, Subcategories
+from .serializers import CategorySerializer
+
+
+class CategoriesViewSet(ReadOnlyModelViewSet):
+
+    queryset = Category.objects.select_related('subcategory').all()
+    serializer_class = CategorySerializer
