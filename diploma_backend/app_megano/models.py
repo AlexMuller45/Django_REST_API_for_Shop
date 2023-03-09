@@ -36,6 +36,10 @@ class Subcategories(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name_plural = 'Подкатегории'
+        verbose_name = 'Подкатегория'
+
 
 class Category(models.Model):
     id = models.AutoField(primary_key=True)
@@ -48,6 +52,10 @@ class Category(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name_plural = 'Категории'
+        verbose_name = 'Категория'
+
 
 class Specifications(models.Model):
     name = models.CharField(max_length=150, null=True, blank=True, verbose_name='Характеристика')
@@ -55,6 +63,10 @@ class Specifications(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name_plural = 'Спецификации'
+        verbose_name = 'Спецификация'
 
 
 class Products(models.Model):
@@ -75,11 +87,19 @@ class Products(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name_plural = 'Товары'
+        verbose_name = 'Товар'
+
 
 class ProductImages(models.Model):
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
     name = models.CharField(max_length=80, null=True, blank=True, verbose_name='Название изображения')
     imageURL = models.ImageField(upload_to=product_image, verbose_name='Ссылка на изображение')
+
+    class Meta:
+        verbose_name_plural = 'Изображения товара'
+        verbose_name = 'Изображение товара'
 
 
 class Reviews(models.Model):
@@ -90,6 +110,10 @@ class Reviews(models.Model):
     rate = models.IntegerField(verbose_name='Рейтинг отзыва')
     date = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавления отзыва')
     date_update = models.DateTimeField(auto_now=True, verbose_name='Дата изменения отзыва')
+
+    class Meta:
+        verbose_name_plural = 'Отзывы'
+        verbose_name = 'Отзыв'
 
     def update_rate(self):
         pass

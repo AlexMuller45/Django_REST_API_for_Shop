@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'frontend',
     'app_cart',
     'app_megano',
+    'app_orders',
+    'app_users',
 ]
 
 MIDDLEWARE = [
@@ -58,6 +60,14 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'diploma_backend.urls'
 
 TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.jinja2.Jinja2',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'environment': 'diploma_backend.jinja2.environment'
+        },
+    },
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
