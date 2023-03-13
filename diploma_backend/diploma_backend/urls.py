@@ -14,12 +14,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.contrib.auth import views as auth_views
+from django.urls import path, include, re_path
 
-api_url = 'api/v1/'
+api_url = 'api/'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    re_path(r'^login/', auth_views.LoginView.as_view(), name='login', kwargs={'redirect_authenticated_user': True}),
     path('', include('frontend.urls')),
     path(api_url, include('app_megano.urls')),
     # path(api_url, include('app_orders.urls')),

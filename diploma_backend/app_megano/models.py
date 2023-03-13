@@ -47,7 +47,8 @@ class Category(models.Model):
     href = models.URLField(unique=True, null=False, blank=False, verbose_name='Ссылка')
     image_src = models.ImageField(upload_to=category_image(id, 'src'), verbose_name='Основное изображение')
     image_alt = models.ImageField(upload_to=category_image(id, 'alt'), verbose_name='Альтернативное изображение')
-    subcategory = models.ManyToManyField(Subcategories, related_name='category', verbose_name='Подкатегории')
+    subcategory = models.ManyToManyField(Subcategories, null=True, blank=True, default=None,
+                                         related_name='category', verbose_name='Подкатегории')
 
     def __str__(self):
         return self.title
