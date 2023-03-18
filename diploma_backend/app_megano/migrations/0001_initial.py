@@ -87,7 +87,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(blank=True, max_length=80, null=True, verbose_name='Название изображения')),
-                ('imageURL', models.ImageField(upload_to=app_megano.models.product_image, verbose_name='Ссылка на изображение')),
+                ('imageURL', models.ImageField(upload_to='images/product/', verbose_name='Ссылка на изображение')),
                 ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='app_megano.products')),
             ],
         ),

@@ -6,5 +6,5 @@ from .serializers import CategorySerializer
 
 class CategoriesViewSet(ReadOnlyModelViewSet):
 
-    queryset = Category.objects.select_related('subcategory').all()
+    queryset = Category.objects.select_related().all()
     serializer_class = CategorySerializer

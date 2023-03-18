@@ -2,36 +2,67 @@ from django.contrib.auth.models import User
 from taggit.managers import TaggableManager
 from django.db import models
 
-
-def product_image(instance):
-    """
-    Генерация пути и имени файла для изображения продукта
-    :param instance: экземпляр модели
-    :return: filename: str
-    """
-    saved_file_name = instance.product + '_' + instance.id
-    return 'images/product/{}.jpg'.format(saved_file_name)
+product_image_path = 'images/product/'
+category_image_path = 'images/category/'
 
 
-def category_image(cat_id, type_img):
-    """
-    Генерация пути и имени файла для изображения каталога или подкаталога
-    :param cat_id: id каталога или подкаталога
-    :param type_img: тип изображения (основное или дополнительное)
-    :return: filename: str
-    """
-    saved_file_name = type_img + '_' + str(cat_id)
-    return 'images/category/{}.jpg'.format(saved_file_name)
+# def product_image(instance):
+#     """
+#     Генерация пути и имени файла для изображения продукта
+#     :param instance: экземпляр модели
+#     :return: filename: str
+#     """
+#     saved_file_name = instance.product + '_' + instance.id
+#     return 'images/product/{}.jpg'.format(saved_file_name)
+#
+#
+# def category_image(cat_id, type_img):
+#     """
+#     Генерация пути и имени файла для изображения каталога или подкаталога
+#     :param cat_id: id каталога или подкаталога
+#     :param type_img: тип изображения (основное или дополнительное)
+#     :return: filename: str
+#     """
+#     saved_file_name = type_img + '_' + str(cat_id)
+#     return 'images/category/{}.jpg'.format(saved_file_name)
+#
+
+class Category(models.Model):
+    id = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=150, unique=True, null=False, blank=False, verbose_name='Название категории')
+    # href = models.URLField(unique=True, null=True, blank=True, verbose_name='Ссылка')
+    image_src = models.ImageField(upload_to=category_image_path, verbose_name='Основное изображение',
+                                  null=True, blank=True)
+    image_alt = models.ImageField(upload_to=category_image_path, verbose_name='Альтернативное изображение',
+                                  null=True, blank=True)
+    active = models.BooleanField(default=False, verbose_name='Aктивные категории товаров')
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse('catalog', args=[str(self.id)])
+
+    class Meta:
+        verbose_name_plural = 'Категории'
+        verbose_name = 'Категория'
 
 
 class Subcategories(models.Model):
     id = models.AutoField(primary_key=True)
-    title = models.CharField(max_length=150, unique=True, null=False, blank=False, verbose_name='Название подкатегории')
-    href = models.URLField(unique=True, null=False, blank=False, verbose_name='Ссылка')
-    image_src = models.ImageField(upload_to=category_image(id, 'src_sub'),
-                                  verbose_name='Основное изображение')
-    image_alt = models.ImageField(upload_to=category_image(id, 'alt_sub'),
-                                  verbose_name='Альтернативное изображение')
+    category = models.ForeignKey(Category,
+                                 on_delete=models.SET_NULL,
+                                 null=True,
+                                 verbose_name='Категория товара')
+    title = models.CharField(max_length=150, unique=True, blank=False, verbose_name='Название подкатегории')
+    # href = models.URLField(unique=True, null=False, blank=False, verbose_name='Ссылка')
+    image_src = models.ImageField(upload_to=category_image_path,
+                                  verbose_name='Основное изображение',
+                                  null=True, blank=True)
+    image_alt = models.ImageField(upload_to=category_image_path,
+                                  verbose_name='Альтернативное изображение',
+                                  null=True, blank=True)
+    active = models.BooleanField(default=False, verbose_name='Aктивные подкатегории товаров')
 
     def __str__(self):
         return self.title
@@ -39,23 +70,6 @@ class Subcategories(models.Model):
     class Meta:
         verbose_name_plural = 'Подкатегории'
         verbose_name = 'Подкатегория'
-
-
-class Category(models.Model):
-    id = models.AutoField(primary_key=True)
-    title = models.CharField(max_length=150, unique=True, null=False, blank=False, verbose_name='Название категории')
-    href = models.URLField(unique=True, null=False, blank=False, verbose_name='Ссылка')
-    image_src = models.ImageField(upload_to=category_image(id, 'src'), verbose_name='Основное изображение')
-    image_alt = models.ImageField(upload_to=category_image(id, 'alt'), verbose_name='Альтернативное изображение')
-    subcategory = models.ManyToManyField(Subcategories, null=True, blank=True, default=None,
-                                         related_name='category', verbose_name='Подкатегории')
-
-    def __str__(self):
-        return self.title
-
-    class Meta:
-        verbose_name_plural = 'Категории'
-        verbose_name = 'Категория'
 
 
 class Specifications(models.Model):
@@ -84,6 +98,7 @@ class Products(models.Model):
     tags = TaggableManager(blank=True)
     specification = models.ForeignKey(Specifications, on_delete=models.SET_NULL, null=True,
                                       verbose_name='Особенности товара')
+    active = models.BooleanField(default=False, verbose_name='Aктивные категории товаров')
 
     def __str__(self):
         return self.title
@@ -96,7 +111,7 @@ class Products(models.Model):
 class ProductImages(models.Model):
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
     name = models.CharField(max_length=80, null=True, blank=True, verbose_name='Название изображения')
-    imageURL = models.ImageField(upload_to=product_image, verbose_name='Ссылка на изображение')
+    imageURL = models.ImageField(upload_to=product_image_path, verbose_name='Ссылка на изображение')
 
     class Meta:
         verbose_name_plural = 'Изображения товара'
