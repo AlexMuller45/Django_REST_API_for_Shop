@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from taggit.managers import TaggableManager
 from django.db import models
+from django.urls import reverse_lazy
 
 product_image_path = 'images/product/'
 category_image_path = 'images/category/'
@@ -31,21 +32,22 @@ class Category(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=150, unique=True, null=False, blank=False, verbose_name='Название категории')
     # href = models.URLField(unique=True, null=True, blank=True, verbose_name='Ссылка')
-    image_src = models.ImageField(upload_to=category_image_path, verbose_name='Основное изображение',
+    image_src = models.ImageField(upload_to=category_image_path, verbose_name='изображение',
                                   null=True, blank=True)
-    image_alt = models.ImageField(upload_to=category_image_path, verbose_name='Альтернативное изображение',
-                                  null=True, blank=True)
+    image_alt = models.CharField(max_length=50, null=True, blank=True, verbose_name='Название')
     active = models.BooleanField(default=False, verbose_name='Aктивные категории товаров')
 
     def __str__(self):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('catalog', args=[str(self.id)])
+        catalog_id = str(self.id)
+        return reverse_lazy('frontend:catalog_pk', kwargs={'pk': catalog_id})
 
     class Meta:
         verbose_name_plural = 'Категории'
         verbose_name = 'Категория'
+        ordering = ['title']
 
 
 class Subcategories(models.Model):
@@ -53,15 +55,14 @@ class Subcategories(models.Model):
     category = models.ForeignKey(Category,
                                  on_delete=models.SET_NULL,
                                  null=True,
-                                 verbose_name='Категория товара')
+                                 verbose_name='Категория товара',
+                                 related_name='subcategories')
     title = models.CharField(max_length=150, unique=True, blank=False, verbose_name='Название подкатегории')
     # href = models.URLField(unique=True, null=False, blank=False, verbose_name='Ссылка')
     image_src = models.ImageField(upload_to=category_image_path,
-                                  verbose_name='Основное изображение',
+                                  verbose_name='изображение',
                                   null=True, blank=True)
-    image_alt = models.ImageField(upload_to=category_image_path,
-                                  verbose_name='Альтернативное изображение',
-                                  null=True, blank=True)
+    image_alt = models.CharField(max_length=50, null=True, blank=True, verbose_name='Название')
     active = models.BooleanField(default=False, verbose_name='Aктивные подкатегории товаров')
 
     def __str__(self):
