@@ -18,6 +18,7 @@ class SubcategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = ['id', 'title', 'image', 'href']
 
+
     def to_representation(self, instance):
         repr = super().to_representation(instance)
         repr['id'] = str(repr['id'])
@@ -34,7 +35,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ['id', 'title', 'href', 'image', 'subcategories']
+        fields = ['id', 'title', 'image', 'href', 'subcategories']
 
     def to_representation(self, instance):
         repr = super().to_representation(instance)
@@ -43,5 +44,4 @@ class CategorySerializer(serializers.ModelSerializer):
 
     def get_image(self, obj):
         return {'src': obj.image_src.url, 'alt': obj.image_alt}
-
 

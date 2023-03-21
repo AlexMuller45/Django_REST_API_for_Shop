@@ -36,6 +36,7 @@ class Category(models.Model):
                                   null=True, blank=True)
     image_alt = models.CharField(max_length=50, null=True, blank=True, verbose_name='Название')
     active = models.BooleanField(default=False, verbose_name='Aктивные категории товаров')
+    index_sort = models.IntegerField(default=500, verbose_name='Индекс сортировки')
 
     def __str__(self):
         return self.title
@@ -47,7 +48,7 @@ class Category(models.Model):
     class Meta:
         verbose_name_plural = 'Категории'
         verbose_name = 'Категория'
-        ordering = ['title']
+        ordering = ['index_sort']
 
 
 class Subcategories(models.Model):
@@ -64,13 +65,19 @@ class Subcategories(models.Model):
                                   null=True, blank=True)
     image_alt = models.CharField(max_length=50, null=True, blank=True, verbose_name='Название')
     active = models.BooleanField(default=False, verbose_name='Aктивные подкатегории товаров')
+    index_sort = models.IntegerField(default=500, verbose_name='Индекс сортировки')
 
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        subcatalog_id = ''.join([str(self.category.id), str(self.id)])
+        return reverse_lazy('frontend:catalog_pk', kwargs={'pk': subcatalog_id})
+
     class Meta:
         verbose_name_plural = 'Подкатегории'
         verbose_name = 'Подкатегория'
+        ordering = ['index_sort']
 
 
 class Specifications(models.Model):
@@ -83,6 +90,7 @@ class Specifications(models.Model):
     class Meta:
         verbose_name_plural = 'Спецификации'
         verbose_name = 'Спецификация'
+
 
 
 class Products(models.Model):

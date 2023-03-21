@@ -25,7 +25,7 @@ class SubcategoriesInline(admin.TabularInline):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['title', 'image_src', 'image_alt', 'preview', 'active']
+    list_display = ['title', 'image_src', 'image_alt', 'preview', 'active', 'index_sort']
     readonly_fields = ('id', 'preview')
     inlines = [SubcategoriesInline, ]
 
@@ -35,7 +35,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Subcategories)
 class SubcategoriesAdmin(admin.ModelAdmin):
-    list_display = ['title', 'category', 'image_src', 'image_alt', 'active', 'preview']
+    list_display = ['title', 'category', 'image_src', 'image_alt', 'active', 'preview', 'index_sort']
     readonly_fields = ('id', 'preview')
 
     def preview(self, obj):
