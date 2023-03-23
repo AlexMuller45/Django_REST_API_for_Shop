@@ -5,7 +5,7 @@ from django.db import models
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.PROTECT)
-    phone = models.CharField(max_length=12, verbose_name='Номер телефона')
+    phone = models.CharField(max_length=12, blank=True, verbose_name='Номер телефона')
     avatar = models.ImageField(upload_to='ava/', blank=True, verbose_name='Аватарка')
 
     class Meta:
