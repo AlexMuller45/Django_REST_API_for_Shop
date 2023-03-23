@@ -1,12 +1,13 @@
-import json
-from rest_framework.parsers import JSONParser
 from django.contrib.auth.models import User
+from django.contrib.auth import update_session_auth_hash
+from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework import status
 
 from .models import UserProfile
-from .serializers import UserSerializer
+from .serializers import UserSerializer, UpdatePasswordSetializer, AvatarUpdateSetializer
 
 
 class UserViewSet(APIView):
@@ -48,4 +49,39 @@ class UserViewSet(APIView):
             user.save()
             profile.save()
         return Response(serializer.data)
+
+
+class PasswordUpdateView(APIView):
+    serializer_class = UpdatePasswordSetializer
+    model = User
+    permission_classes = (IsAuthenticated, IsAdminUser,)
+    parser_classes = [JSONParser]
+
+    def post(self, request, *args, **kwargs):
+        customer = request.user
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            customer.set_password(serializer.data['password'])
+            customer.save()
+            update_session_auth_hash(request, customer)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AvatarUpdateView(APIView):
+    serializer_class = AvatarUpdateSetializer
+    model = UserProfile
+    permission_classes = (IsAuthenticated, IsAdminUser,)
+    parser_classes = [JSONParser]
+
+    def post(self, request, *args, **kwargs):
+        profile = UserProfile.objects.get(user=request.user)
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            profile.avatar = serializer.data['url']
+            profile.save()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

@@ -17,3 +17,10 @@ class UserSerializer(serializers.Serializer):
         instance.avatar = validated_data.get('avatar', instance.avatar)
         return instance
 
+
+class UpdatePasswordSetializer(serializers.Serializer):
+    password = serializers.CharField(min_length=6, required=True)
+
+
+class AvatarUpdateSetializer(serializers.Serializer):
+    url = serializers.CharField()
