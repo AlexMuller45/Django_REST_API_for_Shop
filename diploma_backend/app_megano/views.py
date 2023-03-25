@@ -1,12 +1,12 @@
 from rest_framework.viewsets import ReadOnlyModelViewSet
+from taggit.models import Tag
 
-from .models import Category, Subcategories
-from .serializers import CategorySerializer
+from .models import Category, Subcategories, Products
+from .serializers import CategorySerializer, TagsSerializer
 from django.db.models import Prefetch
 
 
 class CategoriesViewSet(ReadOnlyModelViewSet):
-
     queryset = (
         Category.objects
         .filter(active=True)
@@ -19,5 +19,14 @@ class CategoriesViewSet(ReadOnlyModelViewSet):
                 )
         )
     )
-
     serializer_class = CategorySerializer
+
+
+class TagsViewSet(ReadOnlyModelViewSet):
+    queryset = (
+        Tag.objects
+        .order_by('name')
+    )
+    serializer_class = TagsSerializer
+
+

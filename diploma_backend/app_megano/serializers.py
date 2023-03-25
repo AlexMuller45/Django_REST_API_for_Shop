@@ -1,6 +1,7 @@
 from rest_framework import serializers
-
+from taggit.serializers import TagListSerializerField, TaggitSerializer
 from app_megano.models import Products, Category
+from taggit.models import Tag
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -44,4 +45,13 @@ class CategorySerializer(serializers.ModelSerializer):
 
     def get_image(self, obj):
         return {'src': obj.image_src.url, 'alt': obj.image_alt}
+
+
+class TagsSerializer(TaggitSerializer):
+    id = serializers.CharField(source='name', read_only=True)
+    name = serializers.CharField(source='slug', read_only=True)
+
+    class Meta:
+        model = Tag
+        fields = ['id', 'name']
 

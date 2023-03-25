@@ -1,6 +1,6 @@
 from decimal import Decimal
 from django.conf import settings
-from app_users.models import Goods, GoodsInRetailer
+from app_megano.models import Products
 
 
 class Cart(object):

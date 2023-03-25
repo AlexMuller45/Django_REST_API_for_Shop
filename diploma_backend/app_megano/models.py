@@ -92,16 +92,15 @@ class Specifications(models.Model):
         verbose_name = 'Спецификация'
 
 
-
 class Products(models.Model):
     category = models.ManyToManyField(Category, related_name='products')
     price = models.DecimalField(max_digits=9, decimal_places=2, default=0, verbose_name='Стоимость единицы товара')
-    count = models.PositiveSmallIntegerField(default=0, verbose_name='Количество товара у продавца')
+    count = models.PositiveSmallIntegerField(default=0, verbose_name='Количество товара')
     title = models.CharField(max_length=150, unique=True, null=False, blank=False, verbose_name='Название товара')
     description = models.TextField(null=True, blank=True, verbose_name='Краткое описание товара')
     fullDescription = models.TextField(null=True, blank=True, verbose_name='Полное описание товара')
     freeDelivery = models.BooleanField(default=False, verbose_name='Бесплатная доставка есть/нет')
-    href = models.URLField(unique=True, null=False, blank=False, verbose_name='Ссылка на страницу товара')
+    href = models.CharField(max_length=650, unique=True, null=True, blank=True, verbose_name='Ссылка на страницу товара')
     date = models.DateTimeField(auto_now_add=True, verbose_name='Дата оформления товара')
     date_update = models.DateTimeField(auto_now=True, verbose_name='Дата обновления товара')
     tags = TaggableManager(blank=True)
@@ -125,6 +124,9 @@ class ProductImages(models.Model):
     class Meta:
         verbose_name_plural = 'Изображения товара'
         verbose_name = 'Изображение товара'
+
+    def __str__(self):
+        return '{}_{}'.format(self.product, self.name)
 
 
 class Reviews(models.Model):

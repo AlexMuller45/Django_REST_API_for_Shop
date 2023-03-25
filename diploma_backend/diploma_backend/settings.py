@@ -155,3 +155,5 @@ LOGOUT_REDIRECT_URL = '/'
 
 LOGIN_URL = '/admin/login/'
 
+TAGGIT_CASE_INSENSITIVE = True
+
