@@ -157,3 +157,5 @@ LOGIN_URL = '/admin/login/'
 
 TAGGIT_CASE_INSENSITIVE = True
 
+CART_SESSION_ID = 'cart'
+
