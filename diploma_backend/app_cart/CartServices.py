@@ -1,5 +1,5 @@
 from django.http import Http404
-from app_megano.models import Products, Category
+from app_megano.models import Products
 from .models import CartItems
 
 
