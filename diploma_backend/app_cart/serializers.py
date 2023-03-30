@@ -14,6 +14,7 @@ class TagSerializerField(serializers.ListField):
 
 class CartSerializer(serializers.ModelSerializer):
     id = serializers.CharField(source='item_id.id')
+    date = serializers.DateTimeField(format='%a %b %d %Y %H:%M:%S %Z%z', input_formats=None)
     title = serializers.CharField(source='item_id.title')
     description = serializers.CharField(source='item_id.description')
     href = serializers.CharField(source='item_id.href')

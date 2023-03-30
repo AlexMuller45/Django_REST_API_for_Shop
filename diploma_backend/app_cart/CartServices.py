@@ -10,16 +10,19 @@ class CartService:
     remove_items: удаление товара из корзины
     get_items: получение списка товаров в корзине
     """
-    def add_items(self, item_id, count=1, update_count=False):
+    def __init__(self, request):
+        self.cart = CartItems.objects.filter(user=request.user)
+
+    def add_items(self, request, item_id, count=1):
         """
         Добавление товара в корзину
+        :param request: HttpRequest
         :param item_id: int
         :param count: int
-        :param update_count: Bool
         """
-        product = Products.objects.get(id=item_id).values('category', 'price', 'freeDelivery')
-        user = self.request.user
-        cart_item = CartItems.objects.filter(user=user, item_id=item_id)
+        product = Products.objects.get(id=item_id)
+        user = request.user
+        cart_item = self.cart.get(item_id=item_id)
         if not cart_item:
             cart_item = CartItem(
                     user=user,
@@ -29,20 +32,20 @@ class CartService:
                     count=count,
                     freeDelivery=product.freeDelivery
             )
-        if update_count:
-            cart_item.count = count
-        product.count -= count
-        cart_item.save()
-        product.save()
+        else:
+            cart_item.count += count
 
-    def remove_items(self, item_id, count):
+        cart_item.save()
+
+    def remove_items(self, request, item_id, count):
         """
-        Удаление товара и корзины
+        Удаление товара из корзины
+        :param request: HttpRequest
         :param item_id: int
         :param count: int
         """
-        user = self.request.user
-        cart_item = CartItems.objects.filter(user=user, item_id=item_id)
+        user = request.user
+        cart_item = self.cart.get(item_id=item_id)
         if not cart_item:
             raise Http404('Совпадений не найдено')
         if cart_item.count > count:
