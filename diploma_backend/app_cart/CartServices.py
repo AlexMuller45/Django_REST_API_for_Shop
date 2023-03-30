@@ -11,13 +11,19 @@ class CartService:
     get_items: получение списка товаров в корзине
     """
     def add_items(self, item_id, count=1, update_count=False):
-        product = Products.objects.get(pk=int(self.item_id)).values('category', 'price', 'freeDelivery')
+        """
+        Добавление товара в корзину
+        :param item_id: int
+        :param count: int
+        :param update_count: Bool
+        """
+        product = Products.objects.get(id=item_id).values('category', 'price', 'freeDelivery')
         user = self.request.user
         cart_item = CartItems.objects.filter(user=user, item_id=item_id)
         if not cart_item:
             cart_item = CartItem(
                     user=user,
-                    item_id=item_id,
+                    item_id=product,
                     category=product.category,
                     price=product.price,
                     count=count,
@@ -30,6 +36,11 @@ class CartService:
         product.save()
 
     def remove_items(self, item_id, count):
+        """
+        Удаление товара и корзины
+        :param item_id: int
+        :param count: int
+        """
         user = self.request.user
         cart_item = CartItems.objects.filter(user=user, item_id=item_id)
         if not cart_item:
@@ -41,6 +52,10 @@ class CartService:
             cart_item.delete()
 
     def get_items(self):
+        """
+        Получение списка товаров в корзине
+        :return: Queryset
+        """
         return CartItems.objects.filter(user=self.request.user)
 
     def __len__(self):

@@ -30,7 +30,7 @@ urlpatterns = [
     path(api_url, include('app_megano.urls')),
     # path(api_url, include('app_orders.urls')),
     path(api_url, include('app_users.urls')),
-    # path(api_url, include('app_cart.urls')),
+    path(api_url, include('app_cart.urls')),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

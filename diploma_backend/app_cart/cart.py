@@ -19,7 +19,7 @@ class CartAnon(object):
         if item_id not in self.cart:
             self.cart[item_id] = {
                 'product': str(item.product.id),
-                'retailer': str(item.retailer.id),
+                'category': str(item.category.id),
                 'quantity': 0,
                 'price': str(item.price)}
         if update_quantity:
@@ -43,11 +43,11 @@ class CartAnon(object):
     def __iter__(self):
         """Перебор элементов корзины и получение данных из БД"""
         item_ids = self.cart.keys()
-        items = GoodsInRetailer.objects.select_related().filter(id__in=item_ids)
+        items = Products.objects.filter(id__in=item_ids)
         cart = self.cart.copy()
         for i_item in items:
             cart[str(i_item.id)]['product'] = i_item.product
-            cart[str(i_item.id)]['retailer'] = i_item.retailer
+            cart[str(i_item.id)]['category'] = i_item.category
         for unit in cart.values():
             unit['price'] = Decimal(unit['price'])
             unit['total_price'] = unit['price'] * unit['quantity']
