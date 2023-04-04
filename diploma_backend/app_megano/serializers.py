@@ -1,13 +1,48 @@
 from rest_framework import serializers
 from taggit.serializers import TagListSerializerField, TaggitSerializer
-from app_megano.models import Products, Category
 from taggit.models import Tag
+from decimal import Decimal
+
+from app_megano.models import Products, Category, ProductImages, Reviews
+from app_cart.serializers import TagSerializerField
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    id = serializers.CharField()
+    date = serializers.DateTimeField(format='%a %b %d %Y %H:%M:%S %Z%z', input_formats=None)
+    images = serializers.SerializerMethodField()
+    tags = TagSerializerField()
+    reviews = serializers.SerializerMethodField()
+    rating = serializers.SerializerMethodField()
+
     class Meta:
         model = Products
-        fields = '__all__'
+        fields = ['id', 'category', 'price', 'count', 'date', 'title', 'description', 'href', 'freeDelivery',
+                  'images', 'tags', 'reviews', 'rating']
+
+    def to_representation(self, instance):
+        repr = super().to_representation(instance)
+        repr['category'] = ''.join(str(_) for _ in repr['category'])
+        repr['price'] = Decimal(repr['price'])
+        return repr
+
+    def get_images(self, instance):
+        images = (
+            ProductImages.objects
+            .filter(product=instance.id)
+            .values_list('imageURL', flat=True)
+        )
+        return images
+
+    def get_reviews(self, instance):
+        return (
+            Reviews.objects
+            .filter(product=instance.id)
+            .count()
+        )
+
+    def get_rating(self, obj):
+        return 69
 
 
 class SubcategorySerializer(serializers.ModelSerializer):
@@ -18,7 +53,6 @@ class SubcategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id', 'title', 'image', 'href']
-
 
     def to_representation(self, instance):
         repr = super().to_representation(instance)

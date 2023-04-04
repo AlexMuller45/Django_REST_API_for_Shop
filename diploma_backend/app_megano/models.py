@@ -7,27 +7,6 @@ product_image_path = 'images/product/'
 category_image_path = 'images/category/'
 
 
-# def product_image(instance):
-#     """
-#     Генерация пути и имени файла для изображения продукта
-#     :param instance: экземпляр модели
-#     :return: filename: str
-#     """
-#     saved_file_name = instance.product + '_' + instance.id
-#     return 'images/product/{}.jpg'.format(saved_file_name)
-#
-#
-# def category_image(cat_id, type_img):
-#     """
-#     Генерация пути и имени файла для изображения каталога или подкаталога
-#     :param cat_id: id каталога или подкаталога
-#     :param type_img: тип изображения (основное или дополнительное)
-#     :return: filename: str
-#     """
-#     saved_file_name = type_img + '_' + str(cat_id)
-#     return 'images/category/{}.jpg'.format(saved_file_name)
-#
-
 class Category(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=150, unique=True, null=False, blank=False, verbose_name='Название категории')
