@@ -7,27 +7,6 @@ product_image_path = 'images/product/'
 category_image_path = 'images/category/'
 
 
-# def product_image(instance):
-#     """
-#     Генерация пути и имени файла для изображения продукта
-#     :param instance: экземпляр модели
-#     :return: filename: str
-#     """
-#     saved_file_name = instance.product + '_' + instance.id
-#     return 'images/product/{}.jpg'.format(saved_file_name)
-#
-#
-# def category_image(cat_id, type_img):
-#     """
-#     Генерация пути и имени файла для изображения каталога или подкаталога
-#     :param cat_id: id каталога или подкаталога
-#     :param type_img: тип изображения (основное или дополнительное)
-#     :return: filename: str
-#     """
-#     saved_file_name = type_img + '_' + str(cat_id)
-#     return 'images/category/{}.jpg'.format(saved_file_name)
-#
-
 class Category(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=150, unique=True, null=False, blank=False, verbose_name='Название категории')
@@ -107,6 +86,9 @@ class Products(models.Model):
     specification = models.ForeignKey(Specifications, on_delete=models.SET_NULL, null=True,
                                       verbose_name='Особенности товара')
     active = models.BooleanField(default=False, verbose_name='Aктивные категории товаров')
+    limited = models.BooleanField(default=False, verbose_name='Ограниченная серия')
+    banner = models.BooleanField(default=False, verbose_name='Отобразить на банере')
+    rate = models.IntegerField(verbose_name='Рейтинг товара')
 
     def __str__(self):
         return self.title
@@ -135,13 +117,13 @@ class Reviews(models.Model):
     email = models.EmailField(max_length=70, blank=True, null=True)
     text = models.TextField(verbose_name='Текст отзыва')
     rate = models.IntegerField(verbose_name='Рейтинг отзыва')
-    date = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавления отзыва')
+    date = models.DateTimeField(verbose_name='Дата добавления отзыва')
     date_update = models.DateTimeField(auto_now=True, verbose_name='Дата изменения отзыва')
 
     class Meta:
         verbose_name_plural = 'Отзывы'
         verbose_name = 'Отзыв'
 
-    def update_rate(self):
-        pass
+    def __str__(self):
+        return '{} {}'.format(self.id, self.product)
 
