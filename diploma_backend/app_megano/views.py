@@ -1,11 +1,14 @@
 from rest_framework.viewsets import ViewSet, ReadOnlyModelViewSet, ModelViewSet
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.decorators import action
+from rest_framework.parsers import JSONParser
 from taggit.models import Tag
 from django.db.models import Prefetch
 
-from app_megano.models import Category, Subcategories, Products
-from app_megano.serializers import CategorySerializer, TagsSerializer, ProductSerializer
+from app_megano.models import Category, Subcategories, Products, Reviews
+from app_megano.serializers import (CategorySerializer, TagsSerializer, ProductSerializer, CatalogItemSerializer,
+                                    ReviewSerializer)
 from app_megano.paginations import ProductPagination
 
 
@@ -82,3 +85,59 @@ class CatalogByCategoryViewSet(BaseCatalogViewSet):
         queryset = set_query_limit(queryset, product_limit)
         return queryset
 
+
+class PopularItemsViewSet(ReadOnlyModelViewSet):
+    queryset = (
+        Products.objects
+        .order_by('-rate')[:5]
+    )
+    serializer_class = ProductSerializer
+
+
+class LimitedItemsViewSet(ReadOnlyModelViewSet):
+    queryset = (
+        Products.objects
+        .filter(limited=True)
+        .order_by('-date')
+    )
+    serializer_class = ProductSerializer
+
+
+class BannerItemsViewSet(ReadOnlyModelViewSet):
+    queryset = (
+        Products.objects
+        .filter(banner=True)
+        .order_by('-date')[:3]
+    )
+    serializer_class = ProductSerializer
+
+
+class ProductItemViewSet(ViewSet):
+    permission_classes = (AllowAny,)
+    
+    def retrieve(self, request, pk=None):
+        product = Products.objects.select_related().get(id=self.kwargs['pk'])
+        serializer = CatalogItemSerializer(product, many=False)
+        return Response(serializer.data)
+
+
+class ReviewViewSet(ViewSet):
+    serializer_class = ReviewSerializer
+    permission_classes = (AllowAny, )
+    parser_classes = [JSONParser]
+
+    def create(self, request, pk=None):
+        pk = self.kwargs['pk']
+        product = Products.objects.get(id=pk)
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(product=product)
+
+        queryset = (
+            Reviews.objects
+            .filter(product=self.kwargs['pk'])
+            .values('author', 'email', 'text', 'rate', 'date')
+            .order_by('date')
+        )
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data)

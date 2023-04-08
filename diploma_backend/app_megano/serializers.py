@@ -3,7 +3,7 @@ from taggit.serializers import TagListSerializerField, TaggitSerializer
 from taggit.models import Tag
 from decimal import Decimal
 
-from app_megano.models import Products, Category, ProductImages, Reviews
+from app_megano.models import Products, Category, ProductImages, Reviews, Specifications
 from app_cart.serializers import TagSerializerField
 
 
@@ -13,7 +13,7 @@ class ProductSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField()
     tags = TagSerializerField()
     reviews = serializers.SerializerMethodField()
-    rating = serializers.SerializerMethodField()
+    rating = serializers.IntegerField(source='rate')
 
     class Meta:
         model = Products
@@ -40,9 +40,6 @@ class ProductSerializer(serializers.ModelSerializer):
             .filter(product=instance.id)
             .count()
         )
-
-    def get_rating(self, obj):
-        return 69
 
 
 class SubcategorySerializer(serializers.ModelSerializer):
@@ -89,3 +86,52 @@ class TagsSerializer(TaggitSerializer):
         model = Tag
         fields = ['id', 'name']
 
+
+class SpecificSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=150)
+    value = serializers.CharField()
+
+
+class CatalogItemSerializer(ProductSerializer):
+    reviews = serializers.SerializerMethodField()
+    specification = SpecificSerializer()
+
+    class Meta:
+        model = Products
+        fields = ['id', 'category', 'price', 'count', 'date', 'title', 'description', 'fullDescription',
+                  'href', 'freeDelivery',  'images', 'tags', 'reviews', 'specification', 'rating']
+
+    def get_reviews(self, instance):
+        return (
+            Reviews.objects
+            .filter(product=instance.id)
+            .values('author', 'email', 'text', 'rate', 'date')
+            .order_by('date')
+        )
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reviews
+        fields = ['author', 'email', 'text', 'rate', 'date']
+
+    def create(self, validated_data):
+        return Reviews.objects.create(**validated_data)
+
+
+# class OneItemSerializer(serializers.ModelSerializer):
+#     reviews = serializers.SerializerMethodField()
+#     specification = SpecificSerializer()
+#
+#     class Meta:
+#         model = Products
+#         fields = ['id', 'category', 'price', 'count', 'date', 'title', 'description', 'fullDescription',
+#                   'href', 'freeDelivery', 'images', 'tags', 'reviews', 'specification', 'rating']
+#
+#     def get_reviews(self, instance):
+#         return (
+#             Reviews.objects
+#             .filter(product=instance.id)
+#             .values('author', 'email', 'text', 'rate', 'date')
+#             .order_by('date')
+#         )

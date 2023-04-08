@@ -86,6 +86,9 @@ class Products(models.Model):
     specification = models.ForeignKey(Specifications, on_delete=models.SET_NULL, null=True,
                                       verbose_name='Особенности товара')
     active = models.BooleanField(default=False, verbose_name='Aктивные категории товаров')
+    limited = models.BooleanField(default=False, verbose_name='Ограниченная серия')
+    banner = models.BooleanField(default=False, verbose_name='Отобразить на банере')
+    rate = models.IntegerField(verbose_name='Рейтинг товара')
 
     def __str__(self):
         return self.title
@@ -114,13 +117,13 @@ class Reviews(models.Model):
     email = models.EmailField(max_length=70, blank=True, null=True)
     text = models.TextField(verbose_name='Текст отзыва')
     rate = models.IntegerField(verbose_name='Рейтинг отзыва')
-    date = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавления отзыва')
+    date = models.DateTimeField(verbose_name='Дата добавления отзыва')
     date_update = models.DateTimeField(auto_now=True, verbose_name='Дата изменения отзыва')
 
     class Meta:
         verbose_name_plural = 'Отзывы'
         verbose_name = 'Отзыв'
 
-    def update_rate(self):
-        pass
+    def __str__(self):
+        return '{} {}'.format(self.id, self.product)
 
