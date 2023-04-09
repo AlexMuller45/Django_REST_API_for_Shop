@@ -79,4 +79,3 @@ class ProductInOrder(models.Model):
     class Meta:
         verbose_name_plural = 'Товары в заказе'
         verbose_name = 'Товар в заказе'
-
