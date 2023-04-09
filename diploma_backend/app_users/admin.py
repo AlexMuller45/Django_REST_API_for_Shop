@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
 
-from .models import UserProfile, Cities, Payments
+from .models import UserProfile, Cities, Payments, Address
 
 
 class ProfileInline(admin.StackedInline):
@@ -71,6 +71,10 @@ class CitiesAdmin(admin.ModelAdmin):
 
 
 class PaymentsAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(Address)
+class AddressAdmin(admin.ModelAdmin):
     pass
 
 

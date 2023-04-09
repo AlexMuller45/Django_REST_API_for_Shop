@@ -68,14 +68,17 @@ class Orders(models.Model):
 
 
 class ProductInOrder(models.Model):
-    order = models.ForeignKey(Orders, on_delete=models.PROTECT)
-    product = models.ForeignKey(Products, on_delete=models.PROTECT)
+    order = models.ForeignKey(Orders, on_delete=models.PROTECT, related_name='items')
+    product = models.ForeignKey(Products, on_delete=models.PROTECT, related_name='order_items')
     price = models.DecimalField(max_digits=9, decimal_places=2, default=0, verbose_name='Стоимость единицы товара')
     count = models.PositiveSmallIntegerField(default=1, verbose_name='Количество товара в заказе')
 
     def get_cost(self):
-        return self.price * self.quantity
+        return self.price * self.count
 
     class Meta:
         verbose_name_plural = 'Товары в заказе'
         verbose_name = 'Товар в заказе'
+
+    def __str__(self):
+        return 'заказ № {}, наименование товара: {}'.format(self.order.id, self.product.title)

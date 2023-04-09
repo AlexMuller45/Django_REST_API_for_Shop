@@ -45,7 +45,6 @@ class ProductSerializer(serializers.ModelSerializer):
 class SubcategorySerializer(serializers.ModelSerializer):
     href = serializers.CharField(source='get_absolute_url', read_only=True)
     image = serializers.SerializerMethodField()
-    id = str('id')
 
     class Meta:
         model = Category
@@ -117,21 +116,3 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return Reviews.objects.create(**validated_data)
-
-
-# class OneItemSerializer(serializers.ModelSerializer):
-#     reviews = serializers.SerializerMethodField()
-#     specification = SpecificSerializer()
-#
-#     class Meta:
-#         model = Products
-#         fields = ['id', 'category', 'price', 'count', 'date', 'title', 'description', 'fullDescription',
-#                   'href', 'freeDelivery', 'images', 'tags', 'reviews', 'specification', 'rating']
-#
-#     def get_reviews(self, instance):
-#         return (
-#             Reviews.objects
-#             .filter(product=instance.id)
-#             .values('author', 'email', 'text', 'rate', 'date')
-#             .order_by('date')
-#         )

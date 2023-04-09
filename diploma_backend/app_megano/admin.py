@@ -44,4 +44,4 @@ class SubcategoriesAdmin(admin.ModelAdmin):
 
 @admin.register(Reviews)
 class ReviewsAdmin(admin.ModelAdmin):
-    ordering = ('product', 'date')
+    ordering = ('product', '-date')

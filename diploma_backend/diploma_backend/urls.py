@@ -28,7 +28,7 @@ urlpatterns = [
     re_path(r'^login/', auth_views.LoginView.as_view(), name='login', kwargs={'redirect_authenticated_user': True}),
     path('', include('frontend.urls')),
     path(api_url, include('app_megano.urls')),
-    # path(api_url, include('app_orders.urls')),
+    path(api_url, include('app_orders.urls')),
     path(api_url, include('app_users.urls')),
     path(api_url, include('app_cart.urls')),
 ]
