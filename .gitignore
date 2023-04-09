@@ -1,2 +1,4 @@
 /diploma_backend/Структура/.~lock.Структура URL.xlsx#
 /venv/
+!/venv/Lib/site-packages/frontend/
+
