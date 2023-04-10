@@ -21,13 +21,11 @@ class CartSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField()
     tags = TagSerializerField(source='item_id.tags')
     reviews = serializers.SerializerMethodField()
-    rating = serializers.SerializerMethodField()
 
     class Meta:
         model = CartItems
         fields = ['id', 'category', 'price', 'count', 'date', 'title', 'description',
                   'href', 'freeDelivery', 'images', 'tags', 'reviews', 'rating']
-        # read_only_fields = fields
 
     def get_images(self, obj):
         images = (
@@ -43,7 +41,4 @@ class CartSerializer(serializers.ModelSerializer):
             .filter(product=obj.item_id)
             .count()
         )
-
-    def get_rating(self, obj):
-        return 69
 

@@ -44,12 +44,12 @@ class Orders(models.Model):
     user_profile = models.ForeignKey(UserProfile, on_delete=models.PROTECT)
     createdAt = models.DateTimeField(auto_now_add=True, verbose_name='Дата оформления заказа')
     updated = models.DateTimeField(auto_now=True, verbose_name='Дата обновления заказа')
-    deliveryType = models.ForeignKey(DeliveryType, on_delete=models.PROTECT)
-    paymentType = models.ForeignKey(PaymentType, on_delete=models.PROTECT)
+    deliveryType = models.ForeignKey(DeliveryType, on_delete=models.PROTECT, default=2)
+    paymentType = models.ForeignKey(PaymentType, on_delete=models.PROTECT, default=1)
     totalCost = models.DecimalField(max_digits=12, decimal_places=2, default=0, verbose_name='Сумма заказа')
-    status = models.ForeignKey(Status, on_delete=models.PROTECT)
-    city = models.ForeignKey(Cities, on_delete=models.PROTECT)
-    address = models.ForeignKey(Address, on_delete=models.PROTECT)
+    status = models.ForeignKey(Status, on_delete=models.PROTECT, default=1)
+    city = models.ForeignKey(Cities, on_delete=models.PROTECT, default=6)
+    address = models.ForeignKey(Address, on_delete=models.PROTECT, default=2)
 
     class Meta:
         ordering = ('-createdAt',)

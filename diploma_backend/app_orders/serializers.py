@@ -37,3 +37,10 @@ class OrdersSerializer(serializers.Serializer):
             product = Products.objects.get(id=i_item.product.id)
             products_in_order.append(product)
         return ProductSerializer(products_in_order, many=True).data
+
+
+class CreateOrderSerializer(ProductSerializer):
+
+    class Meta:
+        model = Products
+        fields = ['id', 'price', 'count']
