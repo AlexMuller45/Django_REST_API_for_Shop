@@ -8,6 +8,7 @@ class UserProfile(models.Model):
     phone = models.CharField(max_length=12, blank=True, verbose_name='Номер телефона')
     avatar = models.ImageField(upload_to='ava/', blank=True, verbose_name='Аватарка')
 
+
     class Meta:
         verbose_name_plural = 'Профили пользователей'
         verbose_name = 'Профиль пользователя'
@@ -44,6 +45,7 @@ class Address(models.Model):
 
 
 class Payments(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=64, verbose_name='Название карты')
     number = models.CharField(max_length=19, verbose_name='Номер карты')
     name = models.CharField(max_length=128, blank=True, null=True, verbose_name='Имя владельца карты')

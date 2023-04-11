@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
-from .models import UserProfile
+from app_users.models import UserProfile, Payments
 
 
 class UserSerializer(serializers.Serializer):
@@ -18,9 +18,23 @@ class UserSerializer(serializers.Serializer):
         return instance
 
 
-class UpdatePasswordSetializer(serializers.Serializer):
+class UpdatePasswordSerializer(serializers.Serializer):
     password = serializers.CharField(min_length=6, required=True)
 
 
-class AvatarUpdateSetializer(serializers.Serializer):
+class AvatarUpdateSerializer(serializers.Serializer):
     url = serializers.CharField()
+
+
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payments
+        fields = ['number', 'name', 'month', 'year', 'code']
+
+    def to_representation(self, instance):
+        repr = super().to_representation(instance)
+        repr['month'] = int(repr['month'])
+        repr['year'] = int(repr['year'])
+        repr['code'] = int(repr['code'])
+        return repr
+
