@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import Http404
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -10,6 +11,7 @@ from app_orders.serializers import OrdersSerializer, CreateOrderSerializer
 from app_orders.models import Orders, ProductInOrder, Status, PaymentType, DeliveryType
 from app_users.models import UserProfile, Cities, Address
 from app_megano.models import Products
+
 
 
 class OrdersViewSet(viewsets.ViewSet):
@@ -25,6 +27,13 @@ class OrdersViewSet(viewsets.ViewSet):
             .filter(user_profile__user=self.request.user)
             .order_by('-createdAt')
         )
+
+    def get_order_or_404(self):
+        try:
+            order = self.get_queryset().get(id=self.kwargs['pk'])
+        except Orders.DoesNotExist:
+            raise Http404("Заказа с данным номером не существует.")
+        return order
 
     def list(self, request):
         serializer = self.serializer_class(self.get_queryset(), many=True)
@@ -50,13 +59,13 @@ class OrdersViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
-        order = self.get_queryset().get(id=self.kwargs['pk'])
+        order = self.get_order_or_404()
         serializer = self.serializer_class(order, many=False)
 
         return Response(serializer.data)
 
     def update(self, request, pk=None):
-        order = self.get_queryset().get(id=self.kwargs['pk'])
+        order = self.get_order_or_404()
         items_in_order = ProductInOrder.objects.filter(order=order)
         data = request.data
 
@@ -92,5 +101,3 @@ class OrdersViewSet(viewsets.ViewSet):
         order = self.get_queryset().first()
         serializer = self.serializer_class(order, many=False)
         return Response(serializer.data)
-
-

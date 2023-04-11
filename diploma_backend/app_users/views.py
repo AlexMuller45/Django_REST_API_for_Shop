@@ -6,8 +6,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import status
 
-from .models import UserProfile
-from .serializers import UserSerializer, UpdatePasswordSetializer, AvatarUpdateSetializer
+from app_users.models import UserProfile, Payments
+from app_users.serializers import UserSerializer, UpdatePasswordSerializer, AvatarUpdateSerializer, PaymentSerializer
 
 
 class UserViewSet(APIView):
@@ -52,7 +52,7 @@ class UserViewSet(APIView):
 
 
 class PasswordUpdateView(APIView):
-    serializer_class = UpdatePasswordSetializer
+    serializer_class = UpdatePasswordSerializer
     model = User
     permission_classes = (IsAuthenticated, IsAdminUser,)
     parser_classes = [JSONParser]
@@ -70,7 +70,7 @@ class PasswordUpdateView(APIView):
 
 
 class AvatarUpdateView(APIView):
-    serializer_class = AvatarUpdateSetializer
+    serializer_class = AvatarUpdateSerializer
     model = UserProfile
     permission_classes = (IsAuthenticated, IsAdminUser,)
     parser_classes = [JSONParser]
@@ -85,3 +85,16 @@ class AvatarUpdateView(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class PaymentView(APIView):
+    serializer_class = PaymentSerializer
+    model = Payments
+    permission_classes = (IsAuthenticated, )
+    parser_classes = [JSONParser]
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user, title='Первая попавшаяся')
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from django.db.models import Q
 
 from app_orders.models import Orders, ProductInOrder
 from app_megano.models import Products
@@ -35,6 +36,9 @@ class OrdersSerializer(serializers.Serializer):
         products_in_order = list()
         for i_item in ProductInOrder.objects.filter(order=obj.id):
             product = Products.objects.get(id=i_item.product.id)
+            product_order = ProductInOrder.objects.get(Q(order=obj.id) & Q(product=product))
+            product.count = product_order.count
+            product.price = product_order.price
             products_in_order.append(product)
         return ProductSerializer(products_in_order, many=True).data
 
