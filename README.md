@@ -2,7 +2,7 @@
 с использование Django REST Framework
 
 ## Контракт для API
-Названия роутов и ожидаемую структуру ответа от API endpoints можно найти в `diploma_backend/swagger/swagger.yaml`. 
+Названия роутов и ожидаемую структуру ответа от API endpoints можно найти в [swagger.yaml](`diploma_backend/swagger/swagger.yaml`). 
 
 ## Запуск приложения
 ### Установка
